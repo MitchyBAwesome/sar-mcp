@@ -30,7 +30,7 @@ You can run the server directly:
 python aws_service_reference.py
 ```
 
-### Using with Claude Desktop
+### Using with Claude Desktop (or Cline)
 
 1. Open your Claude Desktop configuration file:
    - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
