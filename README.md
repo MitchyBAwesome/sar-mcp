@@ -3,20 +3,22 @@
 This MCP server provides tools to interact with the AWS Programmatic Service Reference, allowing you to:
 - List all available AWS services
 - Get API actions for specific AWS services
+- Get condition keys supported by specific API actions
+- Get resource types supported by specific API actions
 
 ## Installation
 
 1. Make sure you have Python 3.10 or higher installed
-2. Install the required dependencies:
+2. Clone this repository
+3. Install the required dependencies:
 
 ```bash
-# Using uv (recommended)
-uv venv
+# Create and activate a virtual environment (recommended)
+python -m venv .venv
 source .venv/bin/activate  # On Unix/macOS
 .venv\Scripts\activate     # On Windows
-uv pip install -r requirements.txt
 
-# Or using pip
+# Install dependencies
 pip install -r requirements.txt
 ```
 
@@ -30,7 +32,7 @@ You can run the server directly:
 python aws_service_reference.py
 ```
 
-### Using with Claude Desktop (or Cline)
+### Using with Claude Desktop
 
 1. Open your Claude Desktop configuration file:
    - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -55,10 +57,12 @@ Replace `/ABSOLUTE/PATH/TO/` with the actual path to where you saved the server 
 
 ### Available Tools
 
-The server provides two tools:
+The server provides four tools:
 
 1. `list_aws_services`: Lists all available AWS services
 2. `get_service_actions`: Gets API actions for a specific AWS service
+3. `get_action_condition_keys`: Gets condition keys supported by a specific API action
+4. `get_action_resource_types`: Gets resource types supported by a specific API action
 
 ### Example Usage in Claude
 
@@ -66,15 +70,10 @@ Once connected, you can ask Claude questions like:
 
 - "What AWS services are available?"
 - "Show me all the API actions for the S3 service"
-- "What operations can I perform with EC2?"
+- "What condition keys are supported by the s3:PutObject action?"
+- "What resource types can I use with the ec2:RunInstances action?"
 
 ## Development
-
-### Requirements
-
-The project uses a requirements.txt file to manage dependencies. The main dependencies are:
-- mcp[cli] - For the FastMCP server functionality
-- httpx - For asynchronous HTTP requests
 
 ### Testing with MCP Inspector
 
@@ -84,12 +83,21 @@ You can test the server using the MCP Inspector:
 mcp dev aws_service_reference.py
 ```
 
+### Dependencies
+
+The project uses the following dependencies (specified in `requirements.txt`):
+- `mcp[cli]>=0.1.0`: The Model Context Protocol SDK with CLI tools
+- `httpx>=0.26.0`: Modern HTTP client for making API requests
+
 ## Troubleshooting
 
 If you encounter issues:
 
 1. Verify your Python version is 3.10 or higher
-2. Ensure all dependencies are installed correctly
+2. Ensure all dependencies are installed correctly:
+   ```bash
+   pip install -r requirements.txt
+   ```
 3. Check the Claude Desktop logs:
    - macOS: `~/Library/Logs/Claude/mcp*.log`
    - Windows: `%APPDATA%\Claude\logs\mcp*.log`
