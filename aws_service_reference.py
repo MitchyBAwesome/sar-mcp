@@ -1,7 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 import httpx
 import json
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 
 # Initialize FastMCP server
 mcp = FastMCP("aws-service-reference")
@@ -127,6 +127,47 @@ async def get_action_resource_types(service_name: str, action_name: str) -> str:
             return f"Error processing resources: {str(e)}\n" + debug_info
     except Exception as e:
         return f"Error fetching resource types: {str(e)}"
+
+@mcp.tool()
+async def get_action_properties(service_name: str, action_name: str) -> str:
+    """Get action properties for a specific AWS service action.
+    
+    Action properties provide context about what an action is capable of, such as
+    write or list capabilities, when used in a policy.
+    
+    Args:
+        service_name: Name of the AWS service (e.g., "s3", "ec2")
+        action_name: Name of the API action
+    """
+    try:
+        services = await fetch_service_list()
+        service_info = next((s for s in services if s["service"].lower() == service_name.lower()), None)
+        
+        if not service_info:
+            return f"Service '{service_name}' not found. Use list_aws_services to see available services."
+            
+        service_details = await fetch_service_details(service_info["url"])
+        action = find_action(service_details, action_name)
+        
+        if not action:
+            return f"Action '{action_name}' not found in service '{service_name}'. Use get_service_actions to see available actions."
+        
+        # Extract action properties from annotations
+        annotations = action.get("Annotations", {})
+        properties = annotations.get("Properties", {})
+        
+        if not properties:
+            return f"No action properties found for action '{action_name}' in service '{service_name}'."
+        
+        # Format the properties for display
+        formatted_properties = []
+        for key, value in properties.items():
+            formatted_properties.append(f"{key}: {value}")
+        
+        result = f"Action properties for {service_name}:{action_name}:\n" + "\n".join(formatted_properties)
+        return result
+    except Exception as e:
+        return f"Error fetching action properties: {str(e)}"
 
 if __name__ == "__main__":
     mcp.run() 

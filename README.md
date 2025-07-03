@@ -5,6 +5,7 @@ This MCP server provides tools to interact with the AWS Programmatic Service Ref
 - Get API actions for specific AWS services
 - Get condition keys supported by specific API actions
 - Get resource types supported by specific API actions
+- Get action properties for specific API actions (such as write or list capabilities)
 
 ## Installation
 
@@ -57,12 +58,13 @@ Replace `/ABSOLUTE/PATH/TO/` with the actual path to where you saved the server 
 
 ### Available Tools
 
-The server provides four tools:
+The server provides five tools:
 
 1. `list_aws_services`: Lists all available AWS services
 2. `get_service_actions`: Gets API actions for a specific AWS service
 3. `get_action_condition_keys`: Gets condition keys supported by a specific API action
 4. `get_action_resource_types`: Gets resource types supported by a specific API action
+5. `get_action_properties`: Gets action properties for a specific API action (such as write or list capabilities)
 
 ### Example Usage in Claude
 
@@ -72,6 +74,26 @@ Once connected, you can ask Claude questions like:
 - "Show me all the API actions for the S3 service"
 - "What condition keys are supported by the s3:PutObject action?"
 - "What resource types can I use with the ec2:RunInstances action?"
+- "What are the action properties of s3:PutObject?"
+
+### Example: Using the get_action_properties Tool
+
+The `get_action_properties` tool provides information about what an action is capable of, such as whether it has write or list capabilities. This is useful when creating IAM policies and understanding the nature of different API actions.
+
+```python
+# Example response for get_action_properties with s3:PutObject
+Action properties for s3:PutObject:
+IsList: False
+IsPermissionManagement: False
+IsTaggingOnly: False
+IsWrite: True
+```
+
+You can use this information to:
+- Identify write operations that modify resources
+- Find permission management actions that should be carefully controlled
+- Distinguish between read-only and write operations
+- Identify actions that only modify tags
 
 ## Development
 
